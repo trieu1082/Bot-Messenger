@@ -1,0 +1,24 @@
+node_modules/
+.env
+.env.*
+!.env.example
+
+# Facebook credentials/session data
+cookie.txt
+appstate.json
+utils/data/fbstate.json
+
+# Runtime data
+includes/data.sqlite
+includes/data.sqlite-*
+Fca_Database/
+modules/commands/data/
+utils/data/*.json
+!utils/data/.gitkeep
+*.log
+
+# Local/editor files
+.DS_Store
+.vscode/
+.idea/
+coverage/
