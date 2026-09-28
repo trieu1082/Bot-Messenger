@@ -1,0 +1,40 @@
+{
+  "FCAOption": {
+    "forceLogin": true,
+    "listenEvents": true,
+    "updatePresence": false,
+    "listenTyping": false,
+    "logLevel": "error",
+    "selfListen": false,
+    "selfListenEvent": false,
+    "autoMarkDelivery": false,
+    "autoReconnect": true,
+    "emitReady": true
+  },
+  "language": "vi",
+  "DeveloperMode": false,
+  "autoCreateDB": true,
+  "allowInbox": true,
+  "approvalMode": false,
+  "commandDisabled": [
+    "anti.js",
+    "autodown.js",
+    "note.js",
+    "run.js",
+    "shell.js"
+  ],
+  "eventDisabled": [],
+  "FACEBOOK_ADMIN": "",
+  "BOTNAME": "Bot-Messenger",
+  "PREFIX": "!",
+  "BOXADMIN": "",
+  "ADMINBOT": [],
+  "NDH": [],
+  "version": "3.1.0",
+  "menu": {
+    "autoUnsend": {
+      "status": true,
+      "timeOut": 60
+    }
+  }
+}
