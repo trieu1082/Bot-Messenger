@@ -49,8 +49,7 @@ Phân quyền:
 
 - `0`: thành viên.
 - `1`: quản trị viên nhóm.
-- `2`: ID trong `ADMINBOT`.
-- `3`: ID trong `NDH` (có thể dùng lệnh thực thi mã nếu bạn tự bật lại; chỉ cấp cho người tuyệt đối tin cậy).
+- `3`: ID trong `ADMINBOT` hoặc `NDH`, đều là quyền cao nhất. Không bật lại các lệnh thực thi mã nếu không thật sự cần.
 
 `approvalMode` mặc định là `false`. Nếu bật thành `true`, hãy đặt `BOXADMIN` thành ID nhóm nhận yêu cầu duyệt; người dùng gửi `duyetbox`, sau đó admin dùng lệnh `duyet`.
 
@@ -64,7 +63,31 @@ Phân quyền:
 
 Các file bí mật đã có trong `.gitignore`.
 
-### 5. Kiểm tra và chạy
+### 5. Cấu hình AI Groq
+
+Không đặt API key trong `config.json`, source hoặc tin nhắn commit. Tạo secret `GROQ_API_KEY` trong Replit hoặc biến môi trường trên Render. Mặc định AI dùng `llama-3.3-70b-versatile` và endpoint OpenAI-compatible của Groq.
+
+AI chỉ trả lời khi thành viên gửi `message_reply` trỏ tới chính tin nhắn của bot trong group. Tin nhắn lệnh có prefix sẽ được bỏ qua. Danh sách thành viên lấy từ `getThreadInfo` và được đưa vào context với giới hạn để tránh request quá lớn. Tắt AI bằng `AI.enabled=false` trong `config.json`.
+
+### 6. API theo dõi HTTPS
+
+Ứng dụng mở HTTP nội bộ trên `0.0.0.0:${PORT}`. Replit và Render terminate TLS ở reverse proxy, vì vậy URL public của service là HTTPS mà không cần nhúng certificate vào source.
+
+- `GET /healthz`: health check công khai cho Replit/Render.
+- `GET /api/status`: trạng thái bot, database, MQTT, AI, API, số event, số lỗi và runtime.
+- `GET /api/logs?limit=200&level=all`: log JSON hiện tại.
+- `DELETE /api/logs`: xóa log thủ công.
+
+Các endpoint `/api/*` yêu cầu `x-api-key: <MONITOR_API_KEY>` hoặc `Authorization: Bearer <MONITOR_API_KEY>`. Log chỉ nằm trong memory, mặc định tự xóa bản ghi quá 5 phút mỗi 5 phút; chỉnh bằng `LOG_TTL_MS` và `LOG_CLEANUP_INTERVAL_MS`. Mặc định không ghi log ra console Replit; đặt `MONITOR_CONSOLE_LOGS=true` nếu cần bật tạm thời.
+
+Ví dụ kiểm tra:
+
+```bash
+curl -H "x-api-key: $MONITOR_API_KEY" https://YOUR-REPLIT-OR-RENDER-DOMAIN/api/status
+curl -H "x-api-key: $MONITOR_API_KEY" https://YOUR-REPLIT-OR-RENDER-DOMAIN/api/logs
+```
+
+### 7. Kiểm tra và chạy
 
 ```bash
 npm run check
@@ -73,6 +96,14 @@ npm start
 ```
 
 Bot sẽ tự lưu phiên mới tại `utils/data/fbstate.json` và dữ liệu SQLite tại `includes/data.sqlite`; cả hai đều không được commit.
+
+#### Replit
+
+Dùng Node.js 20+, chạy `npm install` rồi `npm start`. Thêm `FB_COOKIE` hoặc `FB_APPSTATE`, `GROQ_API_KEY` và `MONITOR_API_KEY` vào Secrets. Không dùng `localhost` từ trình duyệt; gọi URL HTTPS public của Replit.
+
+#### Render Web Service
+
+Build command: `npm install`. Start command: `npm start`. Khai báo `PORT` do Render cấp cùng các biến `FB_*`, `GROQ_API_KEY` và `MONITOR_API_KEY`. Dịch vụ phải là Web Service để Render chuyển tiếp health check và HTTPS.
 
 ## Lệnh và module
 

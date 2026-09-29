@@ -1,3 +1,5 @@
+const logger = require("../../utils/log.js");
+
 module.exports.config = {
 	name: "setname",
 	version: "2.0.0",
@@ -52,7 +54,7 @@ module.exports.run = async ({ api, event, args, Users }) => {
 				try{
 					api.removeUserFromGroup(id, threadID)
 				}catch(e){
-					console.log(e)
+					logger(e.stack || e.message || String(e), "error")
 				}
 			});
 			return api.sendMessage(`✅ Đã xóa thành công những thành viên không setname`,threadID)
@@ -103,12 +105,13 @@ module.exports.run = async ({ api, event, args, Users }) => {
 					try{
 						api.changeNickname(name, threadID, i)
 					}catch(e){
-						console.log(num + " " + e)
+						logger(`${num} ${e.stack || e.message || String(e)}`, "error")
 					}
 				}
 				return api.sendMessage(`✅ Đã đổi biệt danh thành công cho tất cả thành viên`,threadID)
 			}catch(e) {
-				return console.log(e,threadID)
+				logger(`${e.stack || e.message || String(e)} | ${threadID}`, "error");
+				return;
 			}
 		}
 		break;

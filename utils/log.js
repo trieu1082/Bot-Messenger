@@ -1,6 +1,6 @@
 "use strict";
 
-const chalk = require("chalk");
+const monitor = require("./monitor.js");
 
 function formatLabel(type) {
   const value = String(type || "INFO").trim();
@@ -9,11 +9,7 @@ function formatLabel(type) {
 }
 
 function logger(text, type = "INFO") {
-  const label = formatLabel(type);
-  const output = `${label} ${String(text)}`;
-  if (String(type).toLowerCase() === "error") console.error(chalk.red.bold(output));
-  else if (String(type).toLowerCase() === "warn") console.warn(chalk.yellow(output));
-  else console.log(chalk.cyan(output));
+  return monitor.log(String(text), formatLabel(type));
 }
 
 logger.loader = (text, option = "LOADING") => logger(text, option);

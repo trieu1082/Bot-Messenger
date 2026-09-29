@@ -1,3 +1,5 @@
+const logger = require("../../utils/log.js");
+
 module.exports.config = {
     "name": "qtv",
     "version": "1.0.0",
@@ -84,7 +86,7 @@ module.exports.run = async function ({ event, api, Currencies, args ,Users, Thre
   }
 }
 module.exports.handleReaction = async function({ event, api, handleReaction, Currencies,Users}){
-  console.log(handleReaction)
+  logger(JSON.stringify(handleReaction), "[ QTV ]");
   if (event.userID != handleReaction.author) return;
   if(handleReaction.type == 'add'){
     var name =  (await Users.getData(handleReaction.userID)).name

@@ -14,7 +14,7 @@ function startBot(message) {
 
   child = spawn(process.execPath, ["--trace-warnings", "--async-stack-traces", "mirai.js"], {
     cwd: __dirname,
-    stdio: "inherit",
+    stdio: "ignore",
     shell: false
   });
 

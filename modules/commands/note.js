@@ -1,4 +1,5 @@
 const axios = require('axios');
+const logger = require('../../utils/log.js');
 const fs = require('fs');
 
 module.exports = {
@@ -56,7 +57,7 @@ module.exports = {
  });
  }
  } catch(e) {
- console.error(e);
+ logger(e.stack || e.message || String(e), "error");
  send(e.toString());
  }
  },
@@ -87,7 +88,7 @@ module.exports = {
  break;
  }
  } catch(e) {
- console.error(e);
+ logger(e.stack || e.message || String(e), "error");
  send(e.toString());
  }
  }

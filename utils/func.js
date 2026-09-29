@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const os = require("os");
 const { createWriteStream } = require('fs');
 const axios = require('axios');
+const logger = require('./log.js');
 
 const utils = {
     throwError: function (command, threadID, messageID) {
@@ -63,7 +64,7 @@ const utils = {
 
             return response;
         } catch (e) {
-            console.log(e);
+            logger(e.stack || e.message || String(e), "error");
         }
     },
 

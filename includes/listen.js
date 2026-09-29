@@ -22,6 +22,8 @@ module.exports = function createListener({ api, models }) {
   const Threads = require("./controllers/threads.js")({ models, api });
   const Currencies = require("./controllers/currencies.js")({ models });
   const logger = require("../utils/log.js");
+  const monitor = require("../utils/monitor.js");
+  const { createAiReplyHandler } = require("../utils/ai.js");
   const dataDirectory = path.join(__dirname, "..", "utils", "data");
   const approvedPath = path.join(dataDirectory, "approvedThreads.json");
   const pendingPath = path.join(dataDirectory, "pendingThreads.json");
@@ -87,6 +89,7 @@ module.exports = function createListener({ api, models }) {
     const name = path.basename(file, ".js");
     handlers[name] = require(`./handle/${file}`)({ api, models, Users, Threads, Currencies });
   }
+  const handleAiReply = createAiReplyHandler({ api });
 
   async function isApproved(event) {
     if (!global.config.approvalMode || !event.threadID) return true;
@@ -125,6 +128,7 @@ module.exports = function createListener({ api, models }) {
 
   return async function handleIncomingEvent(event) {
     if (!event || !event.threadID) return;
+    monitor.recordEvent(event);
     await environmentReady;
     await handlers.handleCreateDatabase({ event });
     if (!(await isApproved(event))) return;
@@ -136,7 +140,8 @@ module.exports = function createListener({ api, models }) {
         await Promise.all([
           handlers.handleCommand({ event }),
           handlers.handleReply({ event }),
-          handlers.handleCommandEvent({ event })
+          handlers.handleCommandEvent({ event }),
+          handleAiReply({ event })
         ]);
         break;
       case "event":

@@ -1,3 +1,5 @@
+const logger = require("../../utils/log.js");
+
 module.exports.config = {
     name: "anti",
     version: "4.1.5",
@@ -159,7 +161,7 @@ module.exports.config = {
       let threadInfo = await api.getThreadInfo(threadID);
       emoji = threadInfo.emoji;
     } catch (error) {
-      console.error("Error fetching thread emoji status:", error);
+      logger(`Khong the lay trang thai emoji: ${error.message}`, "error");
     }
     if (!data.hasOwnProperty(threadID)) {
       data[threadID] = {
@@ -186,7 +188,7 @@ module.exports.config = {
       const threadInfo = await Threads.getInfo(threadID);
       theme = threadInfo.threadTheme.id;
     } catch (error) {
-      console.error("Error fetching thread theme:", error);
+      logger(`Khong the lay chu de nhom: ${error.message}`, "error");
     }
     if (!data.hasOwnProperty(threadID)) {
       data[threadID] = {
