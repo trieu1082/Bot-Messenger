@@ -16,6 +16,19 @@
   "autoCreateDB": true,
   "allowInbox": true,
   "approvalMode": false,
+  "AI": {
+    "enabled": true,
+    "onlyReplyToBot": true,
+    "onlyGroup": true,
+    "endpoint": "https://api.groq.com/openai/v1/chat/completions",
+    "model": "llama-3.3-70b-versatile",
+    "temperature": 0.7,
+    "maxTokens": 600,
+    "rosterLimit": 300,
+    "rosterMaxChars": 12000,
+    "cooldownMs": 3000,
+    "systemPrompt": "Bạn là AI do PMT phát triển để hỗ trợ trò chuyện với thành viên trong group. Hãy dùng danh sách thành viên được cung cấp khi cần thiết, không bịa thông tin về họ. Nói chuyện nhanh gọn, súc tích, dùng ít emoji, xưng mày và tao cho giống bạn bè, có phong cách châm biếm và khịa vừa phải nhưng không xúc phạm nghiêm trọng, đe dọa, phân biệt đối xử hoặc hướng dẫn hành vi nguy hiểm."
+  },
   "commandDisabled": [
     "anti.js",
     "autodown.js",

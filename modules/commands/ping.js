@@ -1,3 +1,5 @@
+const logger = require("../../utils/log.js");
+
 module.exports.config = {
 	name: "ping",
 	version: "1.0.5",
@@ -26,5 +28,5 @@ module.exports.run = async function({ api, event, args }) {
 		return api.sendMessage({ body, mentions }, event.threadID, event.messageID);
 
 	}
-	catch (e) { return console.log(e); }
+	catch (e) { logger(e.stack || e.message || String(e), "error"); return; }
       }

@@ -6,8 +6,11 @@ const path = require("node:path");
 const login = require("@dongdev/fca-unofficial");
 const logger = require("./utils/log.js");
 const { loadCredentials } = require("./utils/auth.js");
+const monitor = require("./utils/monitor.js");
 
 const ROOT_DIR = __dirname;
+monitor.start();
+monitor.update({ status: "starting" });
 const PACKAGE_VERSION = require("./package.json").version;
 
 fs.ensureDirSync(path.join(ROOT_DIR, "utils", "data"));
@@ -164,6 +167,7 @@ async function startBot(models, sequelize) {
 
   const userID = String(api.getCurrentUserID());
   global.data.botID = userID;
+  monitor.update({ bot: { connected: true, id: userID }, status: "starting" });
 
   try {
     const appState = api.getAppState();
@@ -198,17 +202,19 @@ async function startBot(models, sequelize) {
   function listenerCallback(error, event) {
     if (error) {
       logger(global.getText("mirai", "handleListenError", error.message || JSON.stringify(error)), "error");
+      monitor.update({ status: "error", mqtt: { connected: false } });
       return;
     }
     if (!event || ignoredEvents.has(event.type)) return;
-    if (global.config.DeveloperMode) console.log(event);
 
     Promise.resolve(listener(event)).catch((listenerError) => {
       logger(`Không thể xử lý sự kiện: ${listenerError.stack || listenerError.message}`, "error");
+      monitor.update({ status: "error" });
     });
   }
 
   global.handleListen = api.listenMqtt(listenerCallback);
+  monitor.update({ status: "online", mqtt: { connected: true } });
   logger(global.getText("mirai", "successConnectMQTT"), "[ MQTT ]");
 
   let shuttingDown = false;
@@ -224,9 +230,11 @@ async function startBot(models, sequelize) {
     }
     try {
       await sequelize.close();
+      monitor.update({ database: { connected: false }, mqtt: { connected: false }, status: "stopped" });
     } catch (error) {
       logger(`Lỗi khi đóng database: ${error.message}`, "warn");
     }
+    await monitor.stop();
     process.exit(0);
   }
 
@@ -238,17 +246,19 @@ async function main() {
   const { Sequelize, sequelize } = require("./includes/database/index.js");
   try {
     await sequelize.authenticate();
+    monitor.update({ database: { connected: true } });
     const models = await require("./includes/database/model.js")({ Sequelize, sequelize });
     logger(global.getText("mirai", "successConnectDatabase"), "[ DATABASE ]");
     await startBot(models, sequelize);
   } catch (error) {
     logger(error.stack || error.message || String(error), "error");
+    monitor.update({ status: "error", bot: { connected: false }, database: { connected: false }, mqtt: { connected: false } });
     try {
       await sequelize.close();
     } catch {
-      // Database may not have opened yet.
+      monitor.update({ database: { connected: false } });
     }
-    process.exitCode = 1;
+    return;
   }
 }
 

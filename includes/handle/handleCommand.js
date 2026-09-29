@@ -81,8 +81,7 @@ module.exports = function createCommandHandler({ api, models, Users, Threads, Cu
     }
 
     let permission = 0;
-    if (operatorIDs.includes(senderID)) permission = 3;
-    else if (adminIDs.includes(senderID)) permission = 2;
+    if (operatorIDs.includes(senderID) || adminIDs.includes(senderID)) permission = 3;
     else if (!isInbox) {
       try {
         let threadInfo = (await Threads.getData(threadID))?.threadInfo;

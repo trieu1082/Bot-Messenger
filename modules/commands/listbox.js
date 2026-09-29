@@ -1,3 +1,5 @@
+const logger = require("../../utils/log.js");
+
 module.exports.config = {
     name: 'listbox',
     version: '1.0.0',
@@ -37,7 +39,7 @@ module.exports.handleReply = async function({ api, event, args, Threads, handleR
                         var typef = await Threads.setData(idgr, { data });
                         global.data.threadBanned.set(idgr, { dateAdded: data.dateAdded });
                         msg += typef + ' ' + groupName + '\n𝗧𝗜𝗗: ' + idgr + "\n";
-                        console.log(modules, msg)
+                        logger(`${modules} ${msg}`, "[ LISTBOX ]");
                     }
                     api.sendMessage(`=== [ 𝗕𝗔𝗡 𝗡𝗛𝗢́𝗠 ] ===\n🎀 𝗧𝗼̛́ 𝗻𝗵𝗮̣̂𝗻 𝗹𝗲̣̂𝗻𝗵 𝘁𝘂̛̀ 𝗮𝗱𝗺𝗶𝗻, 𝗬𝗲̂𝘂 𝗰𝗮̂̀𝘂 𝗰𝗮̂́𝗺 𝗻𝗵𝗼́𝗺.\n𝗟𝗶𝗲̂𝗻 𝗵𝗲̣̂ 𝗮𝗱𝗺𝗶𝗻 Đ𝗲̂̉ Đ𝘂̛𝗼̛̣𝗰 𝗴𝗼̛̃ 𝗯𝗮𝗻\n🌐 𝗳𝗯 𝗮𝗱𝗺𝗶𝗻:\n${global.config.FACEBOOK_ADMIN || "Chưa cấu hình"}`, idgr, () =>
                         api.sendMessage(`${global.data.botID}`, () =>
@@ -62,7 +64,7 @@ module.exports.handleReply = async function({ api, event, args, Threads, handleR
                         var typef = await Threads.setData(idgr, { data });
                         global.data.threadBanned.delete(idgr, 1);
                         msg += typef + ' ' + groupName + '\n𝗧𝗜𝗗: ' + idgr + "\n";
-                        console.log(modules, msg)
+                        logger(`${modules} ${msg}`, "[ LISTBOX ]");
                     }
                     api.sendMessage(`=== [ 𝗨𝗡𝗕𝗔𝗡 ] ===\n━━━━━━━━━━━━━━━━━━\n🎀 𝗡𝗵𝗼́𝗺 𝗕𝗮̣𝗻 Đ𝗮̃ Đ𝘂̛𝗼̛̣𝗰 𝗚𝗼̛̃ 𝗕𝗮𝗻\n🎊 𝗖𝗵𝘂́𝗰 𝗯𝗮̣𝗻 𝘀𝘂̛̉ 𝗱𝘂̣𝗻𝗴 𝗯𝗼𝘁 𝘃𝘃`, idgr, () =>
                         api.sendMessage(`${global.data.botID}`, () =>
@@ -82,7 +84,7 @@ module.exports.handleReply = async function({ api, event, args, Threads, handleR
                         var groupName = handleReply.groupName[num - 1];
                         var typef = api.removeUserFromGroup(`${api.getCurrentUserID()}`, idgr);
                         msg += typef + ' ' + groupName + '\n» TID: ' + idgr + "\n";
-                        console.log(modules, msg)
+                        logger(`${modules} ${msg}`, "[ LISTBOX ]");
                     }
                     api.sendMessage(`== [ 𝗹𝗲𝗮𝘃𝗲 𝘁𝗵𝗲 𝗴𝗿𝗼𝘂𝗽 ] ==\n━━━━━━━━━━━━━━━━━━\n🎊 𝗧𝗼̛́ 𝗻𝗵𝗮̣̂𝗻 𝗹𝗲̣̂𝗻𝗵 𝘁𝘂̛̀ 𝗮𝗱𝗺𝗶𝗻\n💞 𝗧𝗼̛́ 𝗼𝘂𝘁 𝗻𝗵𝗮 𝗣𝗽\n🌹 𝗟𝗶𝗲̂𝗻 𝗵𝗲̣̂ 𝗮𝗱𝗺𝗶𝗻 Đ𝗲̂̉ Đ𝘂̛𝗼̛̣𝗰 𝗺𝘂̛𝗼̛̣𝗻 𝗯𝗼𝘁 𝗹𝗮̣𝗶\n🌐 𝗳𝗯 𝗮𝗱𝗺𝗶𝗻:\n${global.config.FACEBOOK_ADMIN || "Chưa cấu hình"}`, idgr, () =>
                         api.sendMessage(`${global.data.botID}`, () =>
@@ -199,7 +201,8 @@ messageCount: groupInfo.messageCount,
                     })
                 )
             } catch (e) {
-                return console.log(e)
+                logger(e.stack || e.message || String(e), "error");
+                return;
             }
     }
 };
