@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: bot-messenger
+    runtime: node
+    plan: starter            # free plan se bi spin down khi khong co traffic
+    region: singapore
+    branch: main
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /healthz
+    autoDeploy: false
+    envVars:
+      - key: NODE_VERSION
+        value: 20.17.0
+      - key: TZ
+        value: Asia/Ho_Chi_Minh
+      # Bat buoc: dat gia tri trong Render Dashboard -> Environment (khong commit vao Git)
+      - key: FB_COOKIE
+        sync: false
+      # Hoac dung FB_APPSTATE thay cho FB_COOKIE
+      - key: FB_APPSTATE
+        sync: false
+      - key: MONITOR_API_KEY
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        value: llama-3.3-70b-versatile
+      - key: MONITOR_CONSOLE_LOGS
+        value: "true"
+      - key: BOT_MAX_RESTARTS
+        value: "5"
+    # Disk chi co tren plan tra phi; giup giu session + SQLite qua cac lan restart.
+    # disk:
+    #   name: bot-data
+    #   mountPath: /opt/render/project/src/utils/data
+    #   sizeGB: 1
